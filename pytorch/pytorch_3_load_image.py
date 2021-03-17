@@ -1,4 +1,5 @@
 # https://tutorials.pytorch.kr/beginner/blitz/cifar10_tutorial.html
+# https://www.kaeee.de/2020/10/26/pytorch-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EB%A1%9C%EB%8D%94-%EB%A7%8C%EB%93%A4%EA%B8%B0.html
 # 파이토치 cifar10 예제
 # 한 걸로 롯데 돌려보기
 
@@ -16,15 +17,22 @@ import numpy as np
 
 
 # trasform 지정
-transform = transforms.Compose([transforms.ToTensor(), transforms.Resize((128, 128)), transforms.Normalize((0.5, 0.5, 0.5), (0.5,0.5,0.5))])
+transform = transforms.Compose([transforms.ToTensor(), transforms.Resize((128, 128)), 
+                                transforms.Normalize((0.5, 0.5, 0.5), (0.5,0.5,0.5))])
+
+# 불러올 파일 경로 지정
+data_path_train = glob('../lotte_data/LPD_competition/gwayeon/*/*.jpg') # 0,1,2,3
 
 # 클래스 지정
-classes = (str(range(0,4)))
+classes = ('0', '1', '2', '3')
+
+
 
 # 데이터셋 정의
 class Mydataset(Dataset):
     #data_path_list - 이미지 path 전체 리스트
     #label - 이미지 ground truth
+    
     # 생성자인 __init__ 을 정의. 이미지의 path 리스트와, 클래스 명, transform을 받는다.
     def __init__(self, data_path_list, classes, transform=None):
         self.path_list = data_path_list
@@ -54,14 +62,11 @@ class Mydataset(Dataset):
         return image, self.classes.index(self.label[idx])
 
 
-# 불러올 파일 경로 지정
-data_path_train = glob('C:/lotte_data/LPD_competition/gwayeon/*/*.jpg') # 0,1,2,3
-
 # Dataloader 세팅
 trainloader = torch.utils.data.DataLoader(Mydataset(data_path_train, classes, transform=transform), batch_size=4, shuffle=True)
 
 #---------------------------------------------------------------------------
-# 이미지 보기 
+# 이미지 보고 확인하기
 # if __name__ == '__main__':
                 
 # 이미지를 보여주기 위한 함수
