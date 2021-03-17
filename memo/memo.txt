@@ -1,0 +1,21 @@
+# 사용 할 전이 학습
+VGG-16
+ResNet50
+Inceptionv3
+EfficientNet
+
+# 추가 전이 학습
+https://paperswithcode.com/sota/semi-supervised-image-classification-on-cifar-3	
+EnAET
+
+https://paperswithcode.com/sota/image-classification-on-imagenet
+Meta Pseudo Labels
+
+
+
+# --------------------------------------------------
+다운로드
+
+pip install timm
+https://pypi.org/project/timm/
+# 파이토치에서 쓰이는 모양
