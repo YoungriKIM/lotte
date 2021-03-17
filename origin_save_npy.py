@@ -25,10 +25,15 @@ print(x_df.shape)  # (25600, 256)
 image2 = pilimg.open('../Users/Admin/Desktop/비트 숙제/0210/yeona.jpg')
 pix2 = image2.resize((56,56))
 
+
+
 # ---------------------------------------------------------------------
 # train 데이터 불러오기
 df_pix = []
-number = 48
+number1 = 1000
+number2 = 48
 
-# for a in np.arange(0, number):
-#     file_path = 'D:/lotte/LPD_competition/train/1' str(a).
+for aa in np.arange(0, number1):
+     for a in np.arange(0, number2):
+        file_path = '../lotte_data/LPD_competition/train/' + str(aa) + str(a) + 'jpg'
+        
