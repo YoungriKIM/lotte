@@ -19,7 +19,7 @@ if __name__ == '__main__':
     # 위 코드를 이용하여 -1 ~ 1사이의 값으로 normalized 시킴
 
     # 테스트 데이터 저장하고 경로 지정
-    trainset = torchvision.datasets.CIFAR10(root='../data/cifar10', train=True, download=False,
+    trainset = torchvision.datasets.CIFAR10(root='D:/aidata/cifar10', train=True, download=True,
                                             transform=transform)
     # root : 경로 지정
     # train : train or test 데이터를 받아옴.
@@ -33,7 +33,7 @@ if __name__ == '__main__':
     # shuffle : 데이터를 shuffle할 것인지.
 
     # 테스트에도 적용
-    testset = torchvision.datasets.CIFAR10(root='../data/cifar10', train=False, download=False,
+    testset = torchvision.datasets.CIFAR10(root='D:/aidata/cifar10', train=False, download=True,
                                             transform=transform)
     testloader  = torch.utils.data.DataLoader(testset, batch_size=4, shuffle=False, num_workers=2)
 
@@ -107,7 +107,7 @@ if __name__ == '__main__':
     optimizer = optim.Adam(net.parameters(), lr=1e-3)
 
     # 신경망 학습하기
-    for epoch in range(2):
+    for epoch in range(1):
         
         running_loss = 0.0
         for i, data in enumerate(trainloader, 0):
@@ -119,6 +119,17 @@ if __name__ == '__main__':
 
             # 순전파 + 역전파 + 최적화를 한 후
             outputs = net(inputs)
+
+            # ----------------------------
+            # 확인용
+            print('in:\n',outputs)
+            print('in:\n',len(outputs))
+            print('in:\n',outputs.shape)
+            # ----------------------------
+            print(outputs)
+            print(labels)
+            # ----------------------------
+
             loss = criterion(outputs, labels)
             loss.backward() # 모든 그라디언트들을 자동으로 계산할 수 있게 한다.
             optimizer.step()

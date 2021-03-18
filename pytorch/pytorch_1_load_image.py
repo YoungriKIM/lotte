@@ -1,3 +1,5 @@
+# 못써먹는 파일 ㅡㅡ^
+# 
 # https://tutorials.pytorch.kr/beginner/blitz/cifar10_tutorial.html
 # https://www.kaeee.de/2020/10/26/pytorch-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EB%A1%9C%EB%8D%94-%EB%A7%8C%EB%93%A4%EA%B8%B0.html
 # 파이토치 cifar10 예제
@@ -27,7 +29,6 @@ data_path_train = glob('../lotte_data/LPD_competition/gwayeon/*/*.jpg') # 0,1,2,
 classes = ('0', '1', '2', '3')
 
 
-
 # 데이터셋 정의
 class Mydataset(Dataset):
     #data_path_list - 이미지 path 전체 리스트
@@ -36,14 +37,14 @@ class Mydataset(Dataset):
     # 생성자인 __init__ 을 정의. 이미지의 path 리스트와, 클래스 명, transform을 받는다.
     def __init__(self, data_path_list, classes, transform=None):
         self.path_list = data_path_list
-        self.label = get_label(data_path_list)
+        self.label = get_label(path_list)
         self.transform = transform
         self.classes = classes
 
     # get_label : 라벨을 반환받자
-    def get_label(data_path_list):
+    def get_label(self, path_list):
         label_list = []
-        for path in data_path_list:
+        for path in path_list:
             # 뒤에서 두번째가 class
             label_list.append(path.split('/')[-2])
         return label_list
@@ -64,7 +65,6 @@ class Mydataset(Dataset):
 
 # Dataloader 세팅
 trainloader = torch.utils.data.DataLoader(Mydataset(data_path_train, classes, transform=transform), batch_size=4, shuffle=True)
-
 #---------------------------------------------------------------------------
 # 이미지 보고 확인하기
 # if __name__ == '__main__':
