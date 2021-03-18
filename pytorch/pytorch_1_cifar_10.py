@@ -122,12 +122,12 @@ if __name__ == '__main__':
 
             # ----------------------------
             # 확인용
-            print('in:\n',outputs)
-            print('in:\n',len(outputs))
-            print('in:\n',outputs.shape)
-            # ----------------------------
-            print(outputs)
-            print(labels)
+            # print('in:\n',outputs)
+            # print('in:\n',len(outputs))
+            # print('in:\n',outputs.shape)
+            # # ----------------------------
+            # print(outputs)
+            # print(labels)
             # ----------------------------
 
             loss = criterion(outputs, labels)
@@ -178,7 +178,7 @@ if __name__ == '__main__':
     with torch.no_grad():   # 기록 추척 및 메모리 사용을 방지하기 위해 no_grad를 사용한다.
         for data in testloader:
             inputs, labels = data[0].to(device), data[1].to(device)
-            outputs = net(images)
+            outputs = net(inputs)
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
@@ -192,10 +192,11 @@ if __name__ == '__main__':
     with torch.no_grad():
         for data in testloader:
             inputs, labels = data[0].to(device), data[1].to(device)
-            outputs = net(images)
+            print('확인해!: ', labels)
+            outputs = net(inputs)
             _, predicted = torch.max(outputs, 1)
             c = (predicted == labels).squeeze() # squeeze : 1인 차원을 제거한다.([3,1] > [3])
-            for i in range(4):
+            for i in range(10):
                 label = labels[i]
                 class_correct[label] += c[i].item()
                 class_total[label] += 1
@@ -203,3 +204,5 @@ if __name__ == '__main__':
     for i in range(10):
         print('%5s 의 정확도: %2d %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
         
+
+        # 199줄 왜 라벨즈가 4가 최대인데 ? ㅡㅡ

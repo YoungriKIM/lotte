@@ -4,6 +4,7 @@
 # 성능 잘 나오는지 test 파일 만들어서 확인하기!
 
 import torch
+import torchvision
 from torchvision.datasets import ImageFolder
 import torch.utils.data as data
 from torchvision import transforms
@@ -22,7 +23,7 @@ train_loader = data.DataLoader(train_imgs, batch_size=12, shuffle=True)
 test_imgs = ImageFolder("D:/lotte/LPD_competition/gwayeon_test",
                          transform=transforms.Compose([transforms.ToTensor(), transforms.Resize((128, 128))]))
 
-test_loader = data.DataLoader(train_imgs, batch_size=4, shuffle=True)
+test_loader = data.DataLoader(test_imgs, batch_size=4, shuffle=True)
 
 
 '''
@@ -81,7 +82,7 @@ if __name__ == '__main__':
     optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
     # 신경망 학습하기
-    for epoch in range(2):
+    for epoch in range(1):
         
         running_loss = 0.0
         for i, data in enumerate(train_loader, 0):
@@ -128,18 +129,75 @@ if __name__ == '__main__':
 
 
     # -----------------------------------
-    # 이 파일부터 시작
+    # 이 파일은 여기서부터 시작
     # -----------------------------------
+
+    #----------------------------------------------------------------------------
+    # 이미지 보는 함수 만들기
+    import matplotlib.pyplot as plt
+    
+    def imshow(img):
+        img = img / 2 + 0.5  # 비정규화
+        npimg = img.numpy()
+        print('원래 쉐잎: ', npimg.shape)
+        # 원래 쉐잎:  (3, 132, 522)
+        plt.imshow(np.transpose(npimg, (1, 2, 0)))
+        print('트랜스포스 후 쉐잎: ', np.transpose(npimg, (1, 2, 0)).shape)
+        # 트랜스포스 후 쉐잎:  (132, 522, 3)
+        # 왜 네 개씩 나오는지..왜 쉐잎이 저따군지...미스테리...
+        plt.show()
 
     #----------------------------------------------------------------------------
     # 시험용 데이터 일부로 검사하기
     dataiter = iter(test_loader)
-    images, labels = dataiter.next()
+    test_images, labels = dataiter.next()
+
+    classes = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
 
     # 우선 이미지 출력해서 정답 확인
-    
-    
+    imshow(torchvision.utils.make_grid(test_images))
+    print('일부 테스트 이미지 정답: ', ' '.join('%5s' % classes[labels[j]] for j in range(4)))
 
+    # 모델이 예측한 값 확인
+    test_images = test_images.to(device)
+    outputs = model(test_images)
 
+    # 받은 인덱스의 가장 높은 값으로 확인
+    _, predicted = torch.max(outputs, 1)
+    print('예측한 값: ', ' '.join('%5s' % classes[predicted[j]] for j in range(4)))
+    # ==============================
+    # 테스트 이미지 정답:      7     3     8     3
+    # 예측한 값:      7     3     8     3
+    # 잘했다 내새끼!!
 
-    
+    #----------------------------------------------------------------------------
+    # 전체 테스트 데이터에 대해 확인
+    correct = 0
+    total = 0
+    with torch.no_grad():   # 기록 추척 및 메모리 사용을 방지하기 위해 no_grad를 사용한다.
+        for data in test_loader:
+            inputs, labels = data[0].to(device), data[1].to(device)
+            outputs = model(inputs)
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+    print('전체 테스트 데이터 acc: %d %%' % (100 * correct / total))
+    # ==============================
+    # 전체 테스트 데이터 acc: 80 %
+
+    #----------------------------------------------------------------------------
+    # 10가지 중 어떤 것을 더 잘 분류하고 어떤 것을 못했는지 알아보자
+    class_correct = list(0. for i in range(10))
+    class_total = list(0. for i in range(10))
+    with torch.no_grad():
+        for data in test_loader:
+            inputs, labels = data[0].to(device), data[1].to(device)
+            outputs = model(inputs)
+            _, predicted = torch.max(outputs, 1)
+            c = (predicted == labels).squeeze() # squeeze : 1인 차원을 제거한다.([3,1] > [3])
+            for i in range(10):
+                label
+ 
+ >> 오른쪽 파일 해라
+
+     
