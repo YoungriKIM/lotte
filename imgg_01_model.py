@@ -1,3 +1,5 @@
+# image generator 쓰면 순서 뒤죽박죽 됨  for문으로 만들 것
+
 import numpy as np
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential
