@@ -103,11 +103,11 @@ if __name__ == '__main__':
     import torch.optim as optim
 
     criterion = nn.CrossEntropyLoss()
-    # criterion : 기준 즉 los
+    # criterion : 기준 즉 loss
     optimizer = optim.Adam(net.parameters(), lr=1e-3)
 
     # 신경망 학습하기
-    for epoch in range(1):
+    for epoch in range(16):
         
         running_loss = 0.0
         for i, data in enumerate(trainloader, 0):
@@ -196,7 +196,7 @@ if __name__ == '__main__':
             outputs = net(inputs)
             _, predicted = torch.max(outputs, 1)
             c = (predicted == labels).squeeze() # squeeze : 1인 차원을 제거한다.([3,1] > [3])
-            for i in range(10):
+            for i in range(4):
                 label = labels[i]
                 class_correct[label] += c[i].item()
                 class_total[label] += 1
@@ -206,3 +206,5 @@ if __name__ == '__main__':
         
 
         # 199줄 왜 라벨즈가 4가 최대인데 ? ㅡㅡ
+        # pytorch_3_dataload_jisu3하면서 넘어옴
+        # 4 여도 큰 문제 없이 커버 됨 나중에 알아보기로

@@ -1,7 +1,7 @@
 # https://blog.promedius.ai/pytorch_dataloader_1/
 # 지수짱~
 
-# 성능 잘 나오는지 test 파일 만들어서 확인하기!
+# 100개 분류가자~
 
 import torch
 import torchvision
