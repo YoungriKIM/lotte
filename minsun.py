@@ -1,3 +1,5 @@
+# 민선이꺼 쓰다가 에러뜸
+
 import numpy as np
 import pandas as pd
 import tensorflow as tf
