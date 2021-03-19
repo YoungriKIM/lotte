@@ -27,7 +27,6 @@ data_path_train = glob('../lotte_data/LPD_competition/gwayeon/*/*.jpg') # 0,1,2,
 classes = ('0', '1', '2', '3')
 
 
-
 # 데이터셋 정의
 class Mydataset(Dataset):
     #data_path_list - 이미지 path 전체 리스트
@@ -41,9 +40,9 @@ class Mydataset(Dataset):
         self.classes = classes
 
     # get_label : 라벨을 반환받자
-    def get_label(data_path_list):
+    def get_label(self, path_list):
         label_list = []
-        for path in data_path_list:
+        for path in path_list:
             # 뒤에서 두번째가 class
             label_list.append(path.split('/')[-2])
         return label_list
@@ -64,7 +63,6 @@ class Mydataset(Dataset):
 
 # Dataloader 세팅
 trainloader = torch.utils.data.DataLoader(Mydataset(data_path_train, classes, transform=transform), batch_size=4, shuffle=True)
-
 #---------------------------------------------------------------------------
 # 이미지 보고 확인하기
 # if __name__ == '__main__':
