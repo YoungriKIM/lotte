@@ -1,7 +1,7 @@
 # https://blog.promedius.ai/pytorch_dataloader_1/
 # 지수짱~
 
-# 100개 분류모델 완성용 파일
+# 100개 분류모델 튜닝용 파일!!
 
 import torch
 import torchvision
@@ -10,6 +10,7 @@ import torch.utils.data as data
 from torchvision import transforms
 import torch.nn as nn
 import numpy as np
+
 
 # -----------------------------------------------------------------------------
 # ImageFolder 이용해서 이미지 불러오기
@@ -25,21 +26,6 @@ test_imgs = ImageFolder("D:/lotte/LPD_competition/gwayeon_test",
 
 test_loader = data.DataLoader(test_imgs, batch_size=4, shuffle=True)
 
-
-'''
-# 잘 불러와졌나 확인
-print(train_imgs.classes)
-print(train_imgs.class_to_idx)
-# ['0', '1', '2', '3']
-# {'0': 0, '1': 1, '2': 2, '3': 3}
-print(len(train_imgs))
-print(train_imgs[0][0].shape)
-print(train_imgs[1][0].shape)
-# 192
-# torch.Size([3, 128, 128])
-# torch.Size([3, 128, 128])
-# 야호!
-'''
 
 # -----------------------------------------------------------------------------
 # 전이학습 이용하기
@@ -82,7 +68,7 @@ if __name__ == '__main__':
     optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
     # 신경망 학습하기
-    for epoch in range(1):
+    for epoch in range(8):
         
         running_loss = 0.0
         for i, data in enumerate(train_loader, 0):
@@ -190,17 +176,9 @@ if __name__ == '__main__':
 
 # ================================
 # 전체 테스트 데이터 acc: 95 %      > 10개일 때
-#     0 의 정확도: 50 %
-#     1 의 정확도: 50 %
-#     2 의 정확도: 75 %
-#     3 의 정확도: 75 %
-#     4 의 정확도: 25 %
-#     5 의 정확도: 25 %
-#     6 의 정확도: 100 %
-#     7 의 정확도: 50 %
-#     8 의 정확도: 100 %
-#     9 의 정확도: 75 %
-    
-# pytorch_3_dataload_jisu4
+
+# 100개일 떄 pytorch_3_dataload_jisu4
+# 에폭1
 # final accuracy: 91 %
 # 전체 테스트 데이터 acc: 12 %
+

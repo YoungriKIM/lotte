@@ -1,7 +1,7 @@
 # https://blog.promedius.ai/pytorch_dataloader_1/
 # 지수짱~
 
-# 성능 잘 나오는지 test 파일 만들어서 확인하기!
+# 성능 잘 나오는지 test 파일 만들어서 확인하기! 10만!
 
 import torch
 import torchvision
@@ -183,7 +183,7 @@ if __name__ == '__main__':
             correct += (predicted == labels).sum().item()
     print('전체 테스트 데이터 acc: %d %%' % (100 * correct / total))
     # ==============================
-    # 전체 테스트 데이터 acc: 80 %
+    # 전체 테스트 데이터 acc: 95 %
 
     #----------------------------------------------------------------------------
     # 10가지 중 어떤 것을 더 잘 분류하고 어떤 것을 못했는지 알아보자

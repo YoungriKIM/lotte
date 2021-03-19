@@ -1,7 +1,7 @@
 # https://blog.promedius.ai/pytorch_dataloader_1/
 # 지수짱~
 
-# 100개 분류모델 완성용 파일
+# 1000개 돌리고 제출까지~ ^^
 
 import torch
 import torchvision
@@ -10,11 +10,17 @@ import torch.utils.data as data
 from torchvision import transforms
 import torch.nn as nn
 import numpy as np
+from tensorflow.keras.models import load_model
+import pandas as pd
+from glob import glob
+from tqdm import tqdm
+import cv2
+
 
 # -----------------------------------------------------------------------------
 # ImageFolder 이용해서 이미지 불러오기
 # train 불러오기!
-train_imgs = ImageFolder("D:/lotte/LPD_competition/gwayeon",
+train_imgs = ImageFolder("D:/lotte/LPD_competition/train",
                          transform=transforms.Compose([transforms.ToTensor(), transforms.Resize((128, 128))]))
 
 train_loader = data.DataLoader(train_imgs, batch_size=12, shuffle=True)
@@ -25,6 +31,11 @@ test_imgs = ImageFolder("D:/lotte/LPD_competition/gwayeon_test",
 
 test_loader = data.DataLoader(test_imgs, batch_size=4, shuffle=True)
 
+# pred 불러오기!
+# pred_imgs = ImageFolder("D:/lotte/LPD_competition/pred/test",
+#                          transform=transforms.Compose([transforms.ToTensor(), transforms.Resize((128, 128))]))
+
+# pred_loader = data.DataLoader(pred_imgs, batch_size=4, shuffle=True)
 
 '''
 # 잘 불러와졌나 확인
@@ -60,7 +71,7 @@ if __name__ == '__main__':
     # number of fully connected layer input feature:  1024
 
     # output node 변경
-    model.fc = nn.Linear(in_features=fc_feature, out_features=100)
+    model.fc = nn.Linear(in_features=fc_feature, out_features=1000)
     print(model.fc)
     # Linear(in_features=1024, out_features=4, bias=True)
 
@@ -102,14 +113,14 @@ if __name__ == '__main__':
             # 통계를 출력
             running_loss += loss.item()
             if i % 2 == 1:    # print every 2000 batch
-                print('[%d, %5d] loss: % .3f' % 
+                print('[%d, %5d] loss: % .9f' % 
                 (epoch + 1, i + 1, running_loss / 2000))
                 running_loss = 0.0
     print('===== train done =====')
     
     # 학습한 모델을 저장
     # 토치에서 저장하기: https://pytorch.org/docs/stable/notes/serialization.html
-    path = 'D:/aidata/pth/torch_04.pth'
+    path = 'D:/aidata/pth/torch_06.pth'
     torch.save(model.state_dict(), path)
     print('===== save done =====')
 
@@ -125,7 +136,7 @@ if __name__ == '__main__':
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
     print('final accuracy: %d %%' % (100 * correct / total))
-    # ============================
+
     #----------------------------------------------------------------------------
     # 이미지 보는 함수 만들기
     import matplotlib.pyplot as plt
@@ -145,7 +156,7 @@ if __name__ == '__main__':
 
     #---------------------------------
     makeclasses = []
-    for i in range(0, 100):
+    for i in range(0, 1000):
         aaa = (str(i) + ' ')
         ccc = aaa.split()
         makeclasses.append(ccc)
@@ -165,12 +176,11 @@ if __name__ == '__main__':
             correct += (predicted == labels).sum().item()
     print('전체 테스트 데이터 acc: %d %%' % (100 * correct / total))
     # ==============================
-    # 전체 테스트 데이터 acc: 80 % > 10 개일 때
 
     #----------------------------------------------------------------------------
-    # 100가지 중 어떤 것을 더 잘 분류하고 어떤 것을 못했는지 알아보자
-    class_correct = list(0. for i in range(100))
-    class_total = list(0. for i in range(100))
+    # 1000가지 중 어떤 것을 더 잘 분류하고 어떤 것을 못했는지 알아보자
+    class_correct = list(0. for i in range(1000))
+    class_total = list(0. for i in range(1000))
     with torch.no_grad():
         for data in train_loader:
             inputs, labels = data[0].to(device), data[1].to(device)
@@ -181,26 +191,83 @@ if __name__ == '__main__':
                 label = labels[i]
                 class_correct[label] += c[i].item()
                 class_total[label] += 1
-    for i in range(100):
+    for i in range(1000):
         try:
             print('%5s 의 정확도: %2d %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
         except ZeroDivisionError:
             print("ZeroDivision")
 
+    #  ----------------------------------------------------------------------------------------------
+
 
 # ================================
 # 전체 테스트 데이터 acc: 95 %      > 10개일 때
-#     0 의 정확도: 50 %
-#     1 의 정확도: 50 %
-#     2 의 정확도: 75 %
-#     3 의 정확도: 75 %
-#     4 의 정확도: 25 %
-#     5 의 정확도: 25 %
-#     6 의 정확도: 100 %
-#     7 의 정확도: 50 %
-#     8 의 정확도: 100 %
-#     9 의 정확도: 75 %
-    
-# pytorch_3_dataload_jisu4
+
+# 100개일 떄 pytorch_3_dataload_jisu4
+# 에폭1
 # final accuracy: 91 %
 # 전체 테스트 데이터 acc: 12 %
+
+
+#  ----------------------------------------------------------------------------------------------
+# 예측해서 저장하자!
+import albumentations
+from torch.utils.data import Dataset, DataLoader
+
+class kakakaka(Dataset):
+    def __init__(self, imgs=None, labels=None, transform=None, train=True):
+        self.imgs = imgs
+        self.labels = labels
+        self.transform = transform
+        self.train=train
+        pass
+    
+    def __len__(self):
+        # 데이터 총 샘플 수
+        return len(self.imgs)
+    
+    def __getitem__(self, idx):
+        # 1개 샘플 get1
+        img = self.imgs[idx]
+        img = self.transform(img)
+        
+        if self.train==True:
+            label = self.labels[idx]
+            return img, label
+        else:
+            return img
+
+# 예측 이미지 불러오기
+pred_imgs_dir = np.array(sorted(glob.glob('../dacon12/data/test/*')))
+# 예측 이미지만 모으기
+pred_imgs=[]
+for path in tqdm(pred_imgs_dir):
+    pred_img=cv2.imread(path, cv2.IMREAD_COLOR)
+    pred_imgs.append(pred_img)
+pred_imgs=np.array(pred_imgs)
+
+pred_transform = transforms.Compose([
+        transforms.ToTensor(), transforms.Resize((128, 128))])
+
+
+# ================ Test 추론 =============================
+submission = pd.read_csv('../dacon12/data/sample_submission.csv')
+
+with torch.no_grad():
+    model.load_state_dict(torch.load('D:/aidata/pth/torch_06.pth'))
+    model.eval()
+
+    pred_dataset = kakakaka(imgs = pred_imgs, transform=pred_transform)
+    pred_loader = DataLoader(dataset=pred_dataset, batch_size=32, shuffle=False)
+
+    for n, X_test in enumerate(tqdm(pred_loader)):
+        X_test = torch.tensor(X_test, device=device, dtype=torch.float32)
+        with torch.no_grad():
+            model.eval()
+            pred_test = model(X_test).cpu().detach().numpy()
+            submission.iloc[n*32:(n+1)*32,1:] += pred_test
+
+# ==================== 제출물 생성 ====================
+submission.iloc[:,1:] = np.where(submission.values[:,1:]>=3.0, 1,0)
+submission.to_csv('D:/lotte/LPD_competition/sub/sub_01.csv', index=False)
+print('===== done =====')
