@@ -1,3 +1,5 @@
+# 못써먹는 파일 ㅡㅡ^
+# 
 # https://tutorials.pytorch.kr/beginner/blitz/cifar10_tutorial.html
 # https://www.kaeee.de/2020/10/26/pytorch-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EB%A1%9C%EB%8D%94-%EB%A7%8C%EB%93%A4%EA%B8%B0.html
 # 파이토치 cifar10 예제
@@ -35,7 +37,7 @@ class Mydataset(Dataset):
     # 생성자인 __init__ 을 정의. 이미지의 path 리스트와, 클래스 명, transform을 받는다.
     def __init__(self, data_path_list, classes, transform=None):
         self.path_list = data_path_list
-        self.label = get_label(data_path_list)
+        self.label = get_label(path_list)
         self.transform = transform
         self.classes = classes
 
