@@ -1,19 +1,13 @@
 import numpy as np
 
-bbb = []
 
+
+bbb = []
 for i in range(0, 1000):
-    aaa = (str(i) + ' ')*48
+    aaa = (str(i) + ' ')
     ccc = aaa.split()
     bbb.append(ccc)
 
-print(bbb)
-append = np.array(bbb)
-print(append.shape)
-
-apple = append.reshape(48000, 1)
+apple = tuple(np.array(bbb).squeeze())
 print(apple)
-print(apple.shape)
-# (48000, 1)
-
-from sklearn.
+classes = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')

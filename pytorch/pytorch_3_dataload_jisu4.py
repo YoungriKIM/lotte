@@ -19,7 +19,7 @@ train_imgs = ImageFolder("D:/lotte/LPD_competition/gwayeon",
 
 train_loader = data.DataLoader(train_imgs, batch_size=12, shuffle=True)
 
-# train 불러오기!
+# test 불러오기!
 test_imgs = ImageFolder("D:/lotte/LPD_competition/gwayeon_test",
                          transform=transforms.Compose([transforms.ToTensor(), transforms.Resize((128, 128))]))
 
@@ -60,7 +60,7 @@ if __name__ == '__main__':
     # number of fully connected layer input feature:  1024
 
     # output node 변경
-    model.fc = nn.Linear(in_features=fc_feature, out_features=10)
+    model.fc = nn.Linear(in_features=fc_feature, out_features=100)
     print(model.fc)
     # Linear(in_features=1024, out_features=4, bias=True)
 
@@ -109,12 +109,12 @@ if __name__ == '__main__':
     
     # 학습한 모델을 저장
     # 토치에서 저장하기: https://pytorch.org/docs/stable/notes/serialization.html
-    path = 'D:/aidata/pth/torch_01.pth'
+    path = 'D:/aidata/pth/torch_04.pth'
     torch.save(model.state_dict(), path)
     print('===== save done =====')
 
     #----------------------------------------------------------------------------
-    # 전체 테스트 데이터에 대해 acc 확인
+    # 전체 트레인 데이터에 대해 acc 확인
     correct = 0
     total = 0
     with torch.no_grad():   # 기록 추척 및 메모리 사용을 방지하기 위해 no_grad를 사용한다.
@@ -126,12 +126,6 @@ if __name__ == '__main__':
             correct += (predicted == labels).sum().item()
     print('final accuracy: %d %%' % (100 * correct / total))
     # ============================
-
-
-    # -----------------------------------
-    # 이 파일은 여기서부터 시작
-    # -----------------------------------
-
     #----------------------------------------------------------------------------
     # 이미지 보는 함수 만들기
     import matplotlib.pyplot as plt
@@ -152,8 +146,15 @@ if __name__ == '__main__':
     dataiter = iter(test_loader)
     test_images, labels = dataiter.next()
 
-    classes = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
-
+    #---------------------------------
+    makeclasses = []
+    for i in range(0, 100):
+        aaa = (str(i) + ' ')
+        ccc = aaa.split()
+        makeclasses.append(ccc)
+    classes = tuple(np.array(makeclasses).squeeze())
+    #---------------------------------
+    
     # 우선 이미지 출력해서 정답 확인
     imshow(torchvision.utils.make_grid(test_images))
     print('일부 테스트 이미지 정답: ', ' '.join('%5s' % classes[labels[j]] for j in range(4)))
@@ -166,9 +167,7 @@ if __name__ == '__main__':
     _, predicted = torch.max(outputs, 1)
     print('예측한 값: ', ' '.join('%5s' % classes[predicted[j]] for j in range(4)))
     # ==============================
-    # 테스트 이미지 정답:      7     3     8     3
-    # 예측한 값:      7     3     8     3
-    # 잘했다 내새끼!!
+
 
     #----------------------------------------------------------------------------
     # 전체 테스트 데이터에 대해 확인
@@ -183,12 +182,12 @@ if __name__ == '__main__':
             correct += (predicted == labels).sum().item()
     print('전체 테스트 데이터 acc: %d %%' % (100 * correct / total))
     # ==============================
-    # 전체 테스트 데이터 acc: 80 %
+    # 전체 테스트 데이터 acc: 80 % > 10 개일 때
 
     #----------------------------------------------------------------------------
-    # 10가지 중 어떤 것을 더 잘 분류하고 어떤 것을 못했는지 알아보자
-    class_correct = list(0. for i in range(10))
-    class_total = list(0. for i in range(10))
+    # 100가지 중 어떤 것을 더 잘 분류하고 어떤 것을 못했는지 알아보자
+    class_correct = list(0. for i in range(100))
+    class_total = list(0. for i in range(100))
     with torch.no_grad():
         for data in test_loader:
             inputs, labels = data[0].to(device), data[1].to(device)
@@ -199,11 +198,11 @@ if __name__ == '__main__':
                 label = labels[i]
                 class_correct[label] += c[i].item()
                 class_total[label] += 1
-    for i in range(10):
+    for i in range(100):
         print('%5s 의 정확도: %2d %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
  
 # ================================
-# 전체 테스트 데이터 acc: 95 %
+# 전체 테스트 데이터 acc: 95 %      > 10개일 때
 #     0 의 정확도: 50 %
 #     1 의 정확도: 50 %
 #     2 의 정확도: 75 %
@@ -215,4 +214,4 @@ if __name__ == '__main__':
 #     8 의 정확도: 100 %
 #     9 의 정확도: 75 %
     
-# 다음 파일로 넘어가서 100개로 할 예졍    
+# 100개일 때  
