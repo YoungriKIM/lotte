@@ -5,8 +5,8 @@
 # 그래프 그려서 acc, loss 확인!!
 # 파이토치에 있는 라벨별 에큐러시 확인 만들기!
 # 스프레드 시트에 정리해라~
-# 1) cnn 기본 모델 - 100개 (해당 파일)
-# 1-2) cnn 튜닝 - 100개에서 조금씩 늘려서 튜닝
+# 1) cnn 기본 모델 - 100개
+# 1-2) cnn 튜닝 - 100개에서 조금씩 늘려서 튜닝 (해당 파일)
 # 1-3) dnn - 튜닝까지
 # 1-4) rnn - 튜닝까지
 # 2) 최고모델 + 폴리몰리
@@ -19,7 +19,6 @@ import numpy as np
 import pandas as pd
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
-import cv2
 import datetime 
 from tensorflow.keras.applications import VGG16, ResNet50, InceptionV3, EfficientNetB2
 # 쌤 힌트! x에 적용
@@ -87,7 +86,7 @@ model.add(Flatten())
 model.add(Dense(64))
 model.add(Dense(32))
 model.add(Dense(32))
-model.add(Dense(label_size))
+model.add(Dense(100))
 model.add(Activation('softmax'))
 
 # -----------------------------------------------------------------------------------------------------
@@ -102,7 +101,7 @@ model.compile(loss='categorical_crossentropy', optimizer=Adam(lr=0.001), metrics
 
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, TensorBoard
 patience = 16
-modelpath='D:/lotte_data/h5/cnn_01.hdf5'
+modelpath='D:/lotte_data/h5/dnn_01.hdf5'
 batch_size = 32
 stop = EarlyStopping(monitor='val_loss', patience=patience, verbose=1)
 mc = ModelCheckpoint(filepath=modelpath, monitor='val_loss', save_best_only=True, verbose=1)
@@ -116,8 +115,12 @@ model = load_model(modelpath)
 result = model.evaluate(x_test, y_test, batch_size=batch_size)
 print('loss: ', result[0], '\nacc: ', result[1])
 # ===========================================
+# cnn_01
 # loss:  0.35801950097084045
 # acc:  0.9208333492279053
+# cnn_02
+
+
 '''
 # -----------------------------------------------------------------------------------------------------
 # 최고 모델로 100가지 애큐러시 확인
@@ -131,31 +134,17 @@ for i in range(label_size):
     if each_acc <= 0.9: print(str(i)+'번 라벨 acc: ', each_acc)
     else: print(str(i)+'번 라벨 acc: pass')
 '''
+'''
 # -----------------------------------------------------------------------------------------------------
 # 예측, 저장
 submission = pd.read_csv('D:/lotte_data/LPD_competition/sample.csv', index_col=0)
-
 # npy 파일용
-# y_pred = model.predict(x_pred)
-# submission['prediction'][0:x_pred.shape[0]] = np.argmax(y_pred, axis = 1)
-# submission.to_csv('D:/lotte_data/LPD_competition/sub/sub_cnn_01.csv',index=True)
-# print('==== csv save done ====')
+y_pred = model.predict(x_pred)
 
-# 이미지 불러와서용
-y_pred =[]
-for imgnumber in range(x_pred.shape[0]):
-    pred_img = cv2.imread('D:/lotte_data/LPD_competition/test/'+ str(imgnumber) + '.jpg')
-    pred_img = cv2.resize(pred_img, (128, 128))
-    pred_img = pred_img.reshape(1, 128, 128, 3)
-    pred_img = np.array(pred_img)
-    temp = np.argmax(model.predict(pred_img))
-    y_pred.append(temp)
-y_pred = np.array(y_pred)
-print(y_pred.shape)
-submission['prediction'][0:x_pred.shape[0]] = y_pred
+submission['prediction'][0:label_size] = np.argmax(y_pred, axis = 1)
 submission.to_csv('D:/lotte_data/LPD_competition/sub/sub_cnn_01.csv',index=True)
 print('==== csv save done ====')
-
+'''
 # -----------------------------------------------------------------------------------------------------
 end_now = datetime.datetime.now()
 time = end_now - start_now
