@@ -3,6 +3,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 import pandas as pd
 import PIL.Image as pilimg
+import datetime 
+start_now = datetime.datetime.now()
 
 # 1000개 라벨과 7200개의 pred로 저장해서 진행!
 
@@ -18,7 +20,7 @@ number2 = 48
 # train - label 
 for aa in range(number1):
     for a in range(number2):
-        temp = cv2.imread('D:/lotte_data/LPD_competition/train/' + str(aa)+ '/' + str(a) + '.jpg')
+        temp = cv2.imread('C:/lotte_data/LPD_competition/train/' + str(aa)+ '/' + str(a) + '.jpg')
         temp = cv2.resize(temp, (128, 128))
         temp = np.array(temp)
         train.append(temp)
@@ -35,7 +37,7 @@ print(train_label_1000.shape)
 pred = list()
 number3 = 72000
 for b in range(number3):
-    temp = cv2.imread('D:/lotte_data/LPD_competition/test/' + str(b) + '.jpg')
+    temp = cv2.imread('C:/lotte_data/LPD_competition/test/' + str(b) + '.jpg')
     temp = cv2.resize(temp, (128, 128))
     temp = np.array(temp)
     pred.append(temp)
@@ -52,3 +54,8 @@ np.save('C:/lotte_data/LPD_competition/npy/train_data_1000.npy', arr = train_dat
 np.save('C:/lotte_data/LPD_competition/npy/train_label_1000.npy', arr = train_label_1000)
 np.save('C:/lotte_data/LPD_competition/npy/pred_data_72000.npy', arr = pred_data_72000)
 print('===== done =====')
+
+
+end_now = datetime.datetime.now()
+time = end_now - start_now
+print("time >> " , time) 
