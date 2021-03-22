@@ -135,7 +135,6 @@ submission.to_csv('C:/lotte_data/LPD_competition/sub/imgg_04_2.csv',index=True)
 print('==== csv save done ====')
 
 
-
 # # -----------------------------------------------------------------------------------------------------
 # # 최고 모델로 100가지 애큐러시 확인
 # for i in range(label_size):
