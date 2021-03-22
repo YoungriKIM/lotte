@@ -96,12 +96,12 @@ from sklearn.metrics import mean_squared_error, r2_score, accuracy_score
 model.compile(loss='categorical_crossentropy', optimizer=Adam(lr=0.001), metrics=['acc'])
 
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, TensorBoard
-patience = 16
-modelpath='C:/lotte_data/h5/cnn_01-5.hdf5'
-batch_size = 32
+patience = 32
+modelpath='C:/lotte_data/h5/cnn_01-5_3.hdf5'
+batch_size = 12
 stop = EarlyStopping(monitor='val_loss', patience=patience, verbose=1)
 mc = ModelCheckpoint(filepath=modelpath, monitor='val_loss', save_best_only=True, verbose=1)
-lr = ReduceLROnPlateau(factor=0.3, patience=int(patience/2), verbose=1)
+lr = ReduceLROnPlateau(factor=0.4, patience=int(patience/2), verbose=1)
 model.fit(x_train, y_train, epochs=256, batch_size=batch_size, verbose=1, validation_split=0.2, callbacks=[stop, mc,lr])
 
 # -----------------------------------------------------------------------------------------------------
@@ -110,12 +110,10 @@ model = load_model(modelpath)
 
 result = model.evaluate(x_test, y_test, batch_size=batch_size)
 print('loss: ', result[0], '\nacc: ', result[1])
-# ===========================================
-# loss:  0.35801950097084045
-# acc:  0.9208333492279053
-'''
+
+
 # -----------------------------------------------------------------------------------------------------
-# 최고 모델로 100가지 애큐러시 확인
+# 최고 모델로 1000가지 애큐러시 확인
 for i in range(label_size):
     class_correct = 0
     for j in range(48):
@@ -123,9 +121,8 @@ for i in range(label_size):
         outputs = np.argmax(outputs)
         if outputs == y_train_origin[(i*48)+j]: class_correct += 1
     each_acc = float(class_correct/48)
-    if each_acc <= 0.9: print(str(i)+'번 라벨 acc: ', each_acc)
-    else: print(str(i)+'번 라벨 acc: pass')
-'''
+    if each_acc < 0.8: print(str(i)+'번 라벨 acc: ', each_acc)
+
 # -----------------------------------------------------------------------------------------------------
 # 예측, 저장
 submission = pd.read_csv('C:/lotte_data/LPD_competition/sample.csv', index_col=0)
@@ -145,7 +142,7 @@ for imgnumber in range(x_pred.shape[0]):
     pred_img = np.array(pred_img)
     temp = np.argmax(model.predict(pred_img))
     y_pred.append(temp)
-    if imgnumber % 100 == 99:
+    if imgnumber % 2000 == 1999:
         print(str(imgnumber)+'번째 이미지 작업 완료')
 y_pred = np.array(y_pred)
 print(y_pred.shape)
