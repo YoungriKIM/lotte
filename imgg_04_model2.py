@@ -26,8 +26,8 @@ start_now = datetime.datetime.now()
 # 적용하기 전에 x_train, y_train, x_test, y_test 저장해 둔 npy를 불러오자
 label_size=1000
 
-x_train_origin = np.load('D:/lotte_data/npy/train_data_1000.npy')
-y_train_origin = np.load('D:/lotte_data/npy/train_label_1000.npy')
+x_train_origin = np.load('C:/lotte_data/npy/train_data_1000.npy')
+y_train_origin = np.load('C:/lotte_data/npy/train_label_1000.npy')
 
 # 전이학습용 전처리
 x_train_origin2 = tf.keras.applications.resnet.preprocess_input(x_train_origin)
@@ -100,7 +100,7 @@ model.compile(loss='categorical_crossentropy', optimizer=Adam(lr=0.001), metrics
 
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, TensorBoard
 patience = 16
-modelpath='D:/lotte_data/h5/imgg_04_2.hdf5'
+modelpath='C:/lotte_data/h5/imgg_04_2.hdf5'
 batch_size = 32
 stop = EarlyStopping(monitor='val_loss', patience=patience, verbose=1)
 mc = ModelCheckpoint(filepath=modelpath, monitor='val_loss', save_best_only=True, verbose=1)
@@ -116,18 +116,21 @@ print('loss: ', result[0], '\nacc: ', result[1])
 
 # -----------------------------------------------------------------------------------------------------
 # 예측, 저장
-submission = pd.read_csv('D:/lotte_data/LPD_competition/sample.csv', index_col=0)
+submission = pd.read_csv('C:/lotte_data/LPD_competition/sample.csv', index_col=0)
 pred_size = 72000
 
 # 이미지 불러와서용
 y_pred =[]
 for imgnumber in range(pred_size):
-    pred_img = cv2.imread('D:/lotte_data/LPD_competition/test/'+ str(imgnumber) + '.jpg')
+    pred_img = cv2.imread('C:/lotte_data/LPD_competition/test/'+ str(imgnumber) + '.jpg')
     pred_img = cv2.resize(pred_img, (128, 128))
     pred_img = pred_img.reshape(1, 128, 128, 3)
     pred_img = np.array(pred_img)
+    pred_img = preprocess_input(pred_img)
     temp = np.argmax(model.predict(pred_img))
     y_pred.append(temp)
+    if imgnumber % 3000 == 2999:
+        print(str(imgnumber)+'번째 이미지 작업 완료')
 y_pred = np.array(y_pred)
 print(y_pred.shape)
 submission['prediction'][:pred_size] = y_pred
@@ -157,4 +160,3 @@ print('°˖✧(ง •̀ω•́)ง✧˖° 잘한다 잘한다 잘한다~')
 
 
 # =====================
-
