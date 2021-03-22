@@ -7,7 +7,7 @@
 # 스프레드 시트에 정리해라~
 # 1) cnn 기본 모델 - 100개
 # 1-2) cnn 튜닝 - 100개에서 조금씩 늘려서 튜닝
-# 1-5) cnn - 1000개 라벨 (해당 파일)
+# 1-5) cnn - 1000개 라벨 > 1000 개중 안좋은 것 확인(해당 파일)
 
 
 
@@ -96,13 +96,13 @@ from sklearn.metrics import mean_squared_error, r2_score, accuracy_score
 model.compile(loss='categorical_crossentropy', optimizer=Adam(lr=0.001), metrics=['acc'])
 
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, TensorBoard
-patience = 32
+patience = 16
 modelpath='C:/lotte_data/h5/cnn_01-5_3.hdf5'
-batch_size = 12
+batch_size = 32
 stop = EarlyStopping(monitor='val_loss', patience=patience, verbose=1)
 mc = ModelCheckpoint(filepath=modelpath, monitor='val_loss', save_best_only=True, verbose=1)
-lr = ReduceLROnPlateau(factor=0.4, patience=int(patience/2), verbose=1)
-model.fit(x_train, y_train, epochs=256, batch_size=batch_size, verbose=1, validation_split=0.2, callbacks=[stop, mc,lr])
+lr = ReduceLROnPlateau(factor=0.3, patience=int(patience/2), verbose=1)
+# model.fit(x_train, y_train, epochs=100, batch_size=batch_size, verbose=1, validation_split=0.2, callbacks=[stop, mc,lr])
 
 # -----------------------------------------------------------------------------------------------------
 # 평가
@@ -111,6 +111,32 @@ model = load_model(modelpath)
 result = model.evaluate(x_test, y_test, batch_size=batch_size)
 print('loss: ', result[0], '\nacc: ', result[1])
 
+# -----------------------------------------------------------------------------------------------------
+# 예측, 저장
+submission = pd.read_csv('C:/lotte_data/LPD_competition/sample.csv', index_col=0)
+
+# npy 파일용
+# y_pred = model.predict(x_pred)
+# submission['prediction'][0:x_pred.shape[0]] = np.argmax(y_pred, axis = 1)
+# submission.to_csv('D:/lotte_data/LPD_competition/sub/sub_cnn_01.csv',index=True)
+# print('==== csv save done ====')
+
+# 이미지 불러와서용
+# y_pred =[]
+# for imgnumber in range(x_pred.shape[0]):
+#     pred_img = cv2.imread('C:/lotte_data/LPD_competition/test/'+ str(imgnumber) + '.jpg')
+#     pred_img = cv2.resize(pred_img, (128, 128))
+#     pred_img = pred_img.reshape(1, 128, 128, 3)/255.
+#     pred_img = np.array(pred_img)
+#     temp = np.argmax(model.predict(pred_img))
+#     y_pred.append(temp)
+#     if imgnumber % 2000 == 1999:
+#         print(str(imgnumber)+'번째 이미지 작업 완료')
+# y_pred = np.array(y_pred)
+# print(y_pred.shape)
+# submission['prediction'][:x_pred.shape[0]] = y_pred
+# submission.to_csv('C:/lotte_data/LPD_competition/sub/sub_cnn_01-5_3.csv',index=True)
+# print('==== csv save done ====')
 
 # -----------------------------------------------------------------------------------------------------
 # 최고 모델로 1000가지 애큐러시 확인
@@ -124,36 +150,18 @@ for i in range(label_size):
     if each_acc < 0.8: print(str(i)+'번 라벨 acc: ', each_acc)
 
 # -----------------------------------------------------------------------------------------------------
-# 예측, 저장
-submission = pd.read_csv('C:/lotte_data/LPD_competition/sample.csv', index_col=0)
 
-# npy 파일용
-# y_pred = model.predict(x_pred)
-# submission['prediction'][0:x_pred.shape[0]] = np.argmax(y_pred, axis = 1)
-# submission.to_csv('D:/lotte_data/LPD_competition/sub/sub_cnn_01.csv',index=True)
-# print('==== csv save done ====')
-
-# 이미지 불러와서용
-y_pred =[]
-for imgnumber in range(x_pred.shape[0]):
-    pred_img = cv2.imread('C:/lotte_data/LPD_competition/test/'+ str(imgnumber) + '.jpg')
-    pred_img = cv2.resize(pred_img, (128, 128))
-    pred_img = pred_img.reshape(1, 128, 128, 3)/255.
-    pred_img = np.array(pred_img)
-    temp = np.argmax(model.predict(pred_img))
-    y_pred.append(temp)
-    if imgnumber % 2000 == 1999:
-        print(str(imgnumber)+'번째 이미지 작업 완료')
-y_pred = np.array(y_pred)
-print(y_pred.shape)
-submission['prediction'][:x_pred.shape[0]] = y_pred
-submission.to_csv('C:/lotte_data/LPD_competition/sub/sub_cnn_01-5.csv',index=True)
-print('==== csv save done ====')
-
-# -----------------------------------------------------------------------------------------------------
 end_now = datetime.datetime.now()
 time = end_now - start_now
 print("time >> " , time) 
 
 print('°˖✧(ง •̀ω•́)ง✧˖° 잘한다 잘한다 잘한다~')
+
+# ================================
+# loss:  1.1794580221176147
+# acc:  0.7677083611488342
+
+# sub_cnn_01-5_3
+# loss:  0.6546005010604858
+# acc:  0.9066666960716248
 
