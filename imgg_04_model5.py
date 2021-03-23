@@ -7,7 +7,7 @@
 # 스프레드 시트에 정리해라~
 
 # 3) 전이학습~ ^^  (해당 파일)
-# 구글넷 따라하기
+# 구글넷변이+이미지추가
 
 import tensorflow as tf
 import numpy as np
@@ -29,26 +29,23 @@ label_size=1000
 
 x_train_origin = np.load('C:/lotte_data/npy/train_data_1000.npy')
 y_train_origin = np.load('C:/lotte_data/npy/train_label_1000.npy')
+plus_image = np.load('C:/lotte_data/npy/plus_image.npy')
+plus_label = np.load('C:/lotte_data/npy/plus_label.npy')
 
-# 전이학습용 전처리
-x_train_origin2 = tf.keras.applications.resnet.preprocess_input(x_train_origin)
-x_train = tf.keras.applications.resnet.preprocess_input(x_train_origin)
+x_train_origin2 = np.concatenate((x_train_origin, plus_image), axis=0)
+x_train = np.concatenate((x_train_origin, plus_image), axis=0)
+y_train_origin = np.concatenate((y_train_origin, plus_label), axis=0)
 
-print(x_train.shape)
+print(x_train_origin.shape)
 print(y_train_origin.shape)
-print(np.max(x_train), np.min(x_train))
-# (4800, 128, 128, 3)
-# (4800,)
-# 151.061 -123.68
-
-# 결과 안좋으면 스케일링 ㄱ
+# (48160, 128, 128, 3)
+# (48160,)
 
 # 전처리하자
 # 스케일링
 # from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler
 # x_train_origin2 = x_train_origin.astype('float32')/255.
 # x_train = x_train_origin.astype('float32')/255.
-# x_pred = x_pred.astype('float32')/255.
 
 # y벡터화
 from tensorflow.keras.utils import to_categorical
@@ -146,12 +143,12 @@ model.compile(loss='categorical_crossentropy', optimizer=SGD(lr=0.1), metrics=['
 
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, TensorBoard
 patience = 16
-modelpath='C:/lotte_data/h5/imgg_04_3.hdf5'
-batch_size = 8
+modelpath='C:/lotte_data/h5/imgg_04_6.hdf5'
+batch_size = 24
 stop = EarlyStopping(monitor='val_loss', patience=patience, verbose=1)
 mc = ModelCheckpoint(filepath=modelpath, monitor='val_loss', save_best_only=True, verbose=1)
 lr = ReduceLROnPlateau(factor=0.5, patience=int(patience/2), verbose=1)
-model.fit(x_train, y_train, epochs=200, batch_size=batch_size, verbose=1, validation_split=0.2, callbacks=[stop, mc,lr])
+# model.fit(x_train, y_train, epochs=200, batch_size=batch_size, verbose=1, validation_split=0.2, callbacks=[stop, mc,lr])
 
 # -----------------------------------------------------------------------------------------------------
 # 최고 모델로 평가
@@ -180,7 +177,7 @@ for imgnumber in range(pred_size):
 y_pred = np.array(y_pred)
 print(y_pred.shape)
 submission['prediction'][:pred_size] = y_pred
-submission.to_csv('C:/lotte_data/LPD_competition/sub/imgg_04_3.csv',index=True)
+submission.to_csv('C:/lotte_data/LPD_competition/sub/imgg_04_6.csv',index=True)
 print('==== csv save done ====')
 
 
@@ -207,6 +204,15 @@ print('°˖✧(ง •̀ω•́)ง✧˖° 잘한다 잘한다 잘한다~')
 
 
 # =====================
-# imgg_04_3
+# imgg_04_3 > 이미지 추가 전 + 전처리 안 하고 들어감
 # loss:  0.23780444264411926
 # acc:  0.9947916865348816
+
+# imgg_04_model5 > 이미지 추가 + process input으로 전처리
+# loss:  0.11936328560113907
+# acc:  0.9953280687332153
+# time >>  4:29:40.401953
+# > 롯데 스코어 이상 전처리 안해야 하는 ㅏ모양
+
+# imgg_04_model6 > 전처리 뺌
+# ing
