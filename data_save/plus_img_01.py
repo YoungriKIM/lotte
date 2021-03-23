@@ -4,9 +4,8 @@
 import tensorflow as tf
 import numpy as np
 
-classes = ['48', '90', '129', "135", "141", "227", "273", "329", "408", "445", "448", "523", "545", "582", "737", "788", "843", "914"]
 read_img = tf.keras.preprocessing.image_dataset_from_directory('D:/lotte_data/LPD_competition/plus_train', \
-    image_size=(128,128), batch_size=160, shuffle=False, class_names=classes)
+    image_size=(128,128), batch_size=160, shuffle=False)
 
 for image, label in read_img:
     a = np.array(label)

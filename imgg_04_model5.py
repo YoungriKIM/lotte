@@ -36,16 +36,15 @@ x_train_origin2 = np.concatenate((x_train_origin, plus_image), axis=0)
 x_train = np.concatenate((x_train_origin, plus_image), axis=0)
 y_train_origin = np.concatenate((y_train_origin, plus_label), axis=0)
 
-print(x_train_origin.shape)
+print(x_train_origin2.shape)
 print(y_train_origin.shape)
 # (48160, 128, 128, 3)
 # (48160,)
 
 # 전처리하자
-# 스케일링
-# from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler
-# x_train_origin2 = x_train_origin.astype('float32')/255.
-# x_train = x_train_origin.astype('float32')/255.
+# 전이학습용 전처리
+x_train_origin2 = tf.keras.applications.resnet.preprocess_input(x_train_origin)
+x_train = tf.keras.applications.resnet.preprocess_input(x_train)
 
 # y벡터화
 from tensorflow.keras.utils import to_categorical
@@ -143,12 +142,12 @@ model.compile(loss='categorical_crossentropy', optimizer=SGD(lr=0.1), metrics=['
 
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, TensorBoard
 patience = 16
-modelpath='C:/lotte_data/h5/imgg_04_6.hdf5'
+modelpath='C:/lotte_data/h5/imgg_04_7.hdf5'
 batch_size = 24
 stop = EarlyStopping(monitor='val_loss', patience=patience, verbose=1)
 mc = ModelCheckpoint(filepath=modelpath, monitor='val_loss', save_best_only=True, verbose=1)
 lr = ReduceLROnPlateau(factor=0.5, patience=int(patience/2), verbose=1)
-# model.fit(x_train, y_train, epochs=200, batch_size=batch_size, verbose=1, validation_split=0.2, callbacks=[stop, mc,lr])
+model.fit(x_train, y_train, epochs=200, batch_size=batch_size, verbose=1, validation_split=0.2, callbacks=[stop, mc,lr])
 
 # -----------------------------------------------------------------------------------------------------
 # 최고 모델로 평가
@@ -177,7 +176,7 @@ for imgnumber in range(pred_size):
 y_pred = np.array(y_pred)
 print(y_pred.shape)
 submission['prediction'][:pred_size] = y_pred
-submission.to_csv('C:/lotte_data/LPD_competition/sub/imgg_04_6.csv',index=True)
+submission.to_csv('C:/lotte_data/LPD_competition/sub/imgg_04_7.csv',index=True)
 print('==== csv save done ====')
 
 
@@ -208,11 +207,20 @@ print('°˖✧(ง •̀ω•́)ง✧˖° 잘한다 잘한다 잘한다~')
 # loss:  0.23780444264411926
 # acc:  0.9947916865348816
 
-# imgg_04_model5 > 이미지 추가 + process input으로 전처리
+# 04_4  >  process_imput
+
+# imgg_04_model5 > 이미지 추가 + 전처리 /255.
 # loss:  0.11936328560113907
 # acc:  0.9953280687332153
 # time >>  4:29:40.401953
 # > 롯데 스코어 이상 전처리 안해야 하는 ㅏ모양
 
 # imgg_04_model6 > 전처리 뺌
-# ing
+# 트레인은 전처리 빼고 프레드는 전처리함..ㅡㅡ
+# trash
+
+# 04_7 > process_imput + plus image 
+# 앞뒤모두 process_input
+# loss:  0.1611163467168808
+# acc:  0.9948089718818665
+# time >>  3:16:14.859025
