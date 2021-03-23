@@ -1,4 +1,5 @@
 # 전이황이준 이미지 앵글 전처리!
+# 아직 안 써봄
 
 import cv2
 import numpy as np
