@@ -27,7 +27,6 @@ for aa in range(number1):
         temp = cv2.imread('D:/lotte_data/LPD_competition/train/' + str(aa)+ '/' + str(a) + '.jpg')
         temp = cv2.resize(temp, (128, 128))
         temp = cv2.filter2D(temp, -1, kernel)
-        temp[:,:,0] = cv2.equalizeHist(temp[:,:,0])
         temp = np.array(temp)
         train.append(temp)
 
@@ -38,7 +37,7 @@ print(filter2d_save_npy.shape)
 # ---------------------------------------------------------------------
 # npy로 저장
 
-np.save('D:/lotte_data/npy/filter2d_data_1000.npy', arr = filter2d_save_npy)
+np.save('D:/lotte_data/npy/only_filter2d_data_1000.npy', arr = filter2d_save_npy)
 print('===== done =====')
 
 
