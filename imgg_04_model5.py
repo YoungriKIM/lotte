@@ -42,9 +42,7 @@ print(y_train_origin.shape)
 # (48160,)
 
 # 전처리하자
-# 전이학습용 전처리
-x_train_origin2 = tf.keras.applications.resnet.preprocess_input(x_train_origin)
-x_train = tf.keras.applications.resnet.preprocess_input(x_train)
+2021
 
 # y벡터화
 from tensorflow.keras.utils import to_categorical
