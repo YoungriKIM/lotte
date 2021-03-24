@@ -21,7 +21,7 @@ from tensorflow.keras.applications import VGG16, ResNet101, InceptionV3, Efficie
 
 start_now = datetime.datetime.now()
 # -----------------------------------------------------------------------------------------------------
-# npy로 불러오자 
+# npy로 불러오자    
 
 # origin_save_npy_01
 # 적용하기 전에 x_train, y_train, x_test, y_test 저장해 둔 npy를 불러오자
@@ -57,6 +57,16 @@ x_train, x_test, y_train, y_test = train_test_split(x_train, y_train, test_size=
 print('x_train:',x_train.shape, 'x_test:',x_test.shape); print('y_train:',y_train.shape, 'y_test:',y_test.shape)
 # x_train: (3840, 128, 128, 3) x_test: (960, 128, 128, 3)
 # y_train: (3840, 100) y_test: (960, 100)
+
+print(x_train.shape, y_train.shape)
+print(np.max(x_train), np.min(x_train))
+print(np.max(y_train), np.min(y_train))
+# x_train: (38528, 128, 128, 3) x_test: (9632, 128, 128, 3)
+# y_train: (38528, 1000) y_test: (9632, 1000)
+# (38528, 128, 128, 3) (38528, 1000)
+# 151.061 -123.68
+# 1.0 0.0
+
 
 # -----------------------------------------------------------------------------------------------------
 # 모델 구성
@@ -138,7 +148,8 @@ from tensorflow.keras.metrics import binary_accuracy, binary_crossentropy,\
                                      sparse_categorical_accuracy,  sparse_categorical_crossentropy,\
                                      top_k_categorical_accuracy, sparse_top_k_categorical_accuracy
 from sklearn.metrics import mean_squared_error, r2_score, accuracy_score
-model.compile(loss='categorical_crossentropy', optimizer=SGD(lr=0.001), metrics=['acc'])
+sgd = SGD(lr=0.001, decay=1e-6, momentum=0.9, nesterov=True)
+model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['acc'])
 
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, TensorBoard
 patience = 16
@@ -147,7 +158,7 @@ batch_size = 24
 stop = EarlyStopping(monitor='val_loss', patience=patience, verbose=1)
 mc = ModelCheckpoint(filepath=modelpath, monitor='val_loss', save_best_only=True, verbose=1)
 lr = ReduceLROnPlateau(factor=0.5, patience=int(patience/2), verbose=1)
-model.fit(x_train, y_train, epochs=1000, batch_size=batch_size, verbose=1, validation_split=0.2, callbacks=[stop, mc,lr])
+model.fit(x_train, y_train, epochs=1000, batch_size=batch_size, verbose=1, validation_split=0.2, callbacks=[stop,lr])# ,mc])
 
 # -----------------------------------------------------------------------------------------------------
 # 최고 모델로 평가
@@ -230,3 +241,6 @@ print('°˖✧(ง •̀ω•́)ง✧˖° 잘한다 잘한다 잘한다~')
 
 # imgg_04_9
 # sgd 0.001 으로
+# loss:  0.2573263347148895
+# acc:  0.9934592843055725
+
