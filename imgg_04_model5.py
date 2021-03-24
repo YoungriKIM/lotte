@@ -138,16 +138,16 @@ from tensorflow.keras.metrics import binary_accuracy, binary_crossentropy,\
                                      sparse_categorical_accuracy,  sparse_categorical_crossentropy,\
                                      top_k_categorical_accuracy, sparse_top_k_categorical_accuracy
 from sklearn.metrics import mean_squared_error, r2_score, accuracy_score
-model.compile(loss='categorical_crossentropy', optimizer=SGD(lr=0.1), metrics=['acc'])
+model.compile(loss='categorical_crossentropy', optimizer=SGD(lr=0.001), metrics=['acc'])
 
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, TensorBoard
 patience = 16
-modelpath='C:/lotte_data/h5/imgg_04_7.hdf5'
+modelpath='C:/lotte_data/h5/imgg_04_9.hdf5'
 batch_size = 24
 stop = EarlyStopping(monitor='val_loss', patience=patience, verbose=1)
 mc = ModelCheckpoint(filepath=modelpath, monitor='val_loss', save_best_only=True, verbose=1)
 lr = ReduceLROnPlateau(factor=0.5, patience=int(patience/2), verbose=1)
-model.fit(x_train, y_train, epochs=200, batch_size=batch_size, verbose=1, validation_split=0.2, callbacks=[stop, mc,lr])
+model.fit(x_train, y_train, epochs=1000, batch_size=batch_size, verbose=1, validation_split=0.2, callbacks=[stop, mc,lr])
 
 # -----------------------------------------------------------------------------------------------------
 # 최고 모델로 평가
@@ -176,7 +176,7 @@ for imgnumber in range(pred_size):
 y_pred = np.array(y_pred)
 print(y_pred.shape)
 submission['prediction'][:pred_size] = y_pred
-submission.to_csv('C:/lotte_data/LPD_competition/sub/imgg_04_7.csv',index=True)
+submission.to_csv('C:/lotte_data/LPD_competition/sub/imgg_04_9.csv',index=True)
 print('==== csv save done ====')
 
 
@@ -216,9 +216,6 @@ print('°˖✧(ง •̀ω•́)ง✧˖° 잘한다 잘한다 잘한다~')
 # > 롯데 스코어 이상 전처리 안해야 하는 ㅏ모양
 
 # imgg_04_model6 > 전처리 뺌
-<<<<<<< HEAD
-# 학원 ing
-=======
 # 트레인은 전처리 빼고 프레드는 전처리함..ㅡㅡ
 # trash
 
@@ -227,4 +224,9 @@ print('°˖✧(ง •̀ω•́)ง✧˖° 잘한다 잘한다 잘한다~')
 # loss:  0.1611163467168808
 # acc:  0.9948089718818665
 # time >>  3:16:14.859025
->>>>>>> 53fd98abd374f9f5fde8a46b7a8c37d59be1a606
+
+# imgg_04_8
+# > _7 에서 에폭 1000번으로
+
+# imgg_04_9
+# sgd 0.001 으로

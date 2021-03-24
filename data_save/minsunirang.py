@@ -1,5 +1,5 @@
 # C:\lotte\lotte\preprocessing\gausian_blur.py
-# 를 위한 ~ 가우시안 적용 이미지 저장용!
+# 를 위한 ~ 이미지 선명하게!
 
 import cv2
 import numpy as np
@@ -11,8 +11,8 @@ import PIL.Image as pilimg
 # train 데이터 불러오기
 train = list()
 label = list()
-number1 = 100
-number2 = 48
+number1 = 1
+number2 = 1
 
 kernel = np.array([[0, -1, 0],
                    [-1, 5, -1],
@@ -23,12 +23,10 @@ kernel = np.array([[0, -1, 0],
 # train - label 
 for aa in range(number1):
     for a in range(number2):
-        temp = cv2.imread('D:/lotte_data/LPD_competition/train/' + str(aa)+ '/' + str(a) + '.jpg')
+        temp = cv2.imread('C:/lotte_data/LPD_competition/train/' + str(aa)+ '/' + str(a) + '.jpg')
         temp = cv2.resize(temp, (128, 128))
         temp = cv2.filter2D(temp, -1, kernel)
-        temp[:,:,0] = cv2.equalizeHist(temp[:,:,0])
-
-        # plt.imshow(temp);plt.show()
+        plt.imshow(temp); plt.show()
         temp = np.array(temp)
         train.append(temp)
 
@@ -37,8 +35,8 @@ for aa in range(number1):
 filter2D_train_data_100 = np.array(train)
 print(filter2D_train_data_100.shape)
 
-# ---------------------------------------------------------------------
-# npy로 저장
+# # ---------------------------------------------------------------------
+# # npy로 저장
 
 np.save('D:/lotte_data/npy/filter2D_train_data_100.npy', arr = filter2D_train_data_100)
 print('===== done =====')
