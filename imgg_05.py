@@ -1,5 +1,13 @@
-# 원본 이미지 + 플러스이미지 1,2회차
-# 이미지 사이즈 크게!
+# 100개 라벨
+# 100개의 pred 이미지로 진행
+# cnn만들기 
+
+# 그래프 그려서 acc, loss 확인!!
+# 파이토치에 있는 라벨별 에큐러시 확인 만들기!
+# 스프레드 시트에 정리해라~
+
+# 3) 전이학습~ ^^  (해당 파일)
+# 구글넷 따라하기
 
 import tensorflow as tf
 import numpy as np
@@ -19,21 +27,33 @@ start_now = datetime.datetime.now()
 # 적용하기 전에 x_train, y_train, x_test, y_test 저장해 둔 npy를 불러오자
 label_size=1000
 
-x_train = np.load('C:/lotte_data/npy/1,2sum_data_1000.npy')
+x_train_origin = np.load('C:/lotte_data/npy/1,2sum_data_1000.npy')
 y_train_origin = np.load('C:/lotte_data/npy/1,2sum_label_1000.npy')
 
-# 전처리하자
 # 전이학습용 전처리
-x_train = tf.keras.applications.resnet.preprocess_input(x_train)
+x_train_origin2 = tf.keras.applications.resnet.preprocess_input(x_train_origin)
+x_train = tf.keras.applications.resnet.preprocess_input(x_train_origin)
+
+print(x_train.shape)
+print(y_train_origin.shape)
+print(np.max(x_train), np.min(x_train))
+# (4800, 128, 128, 3)
+# (4800,)
+# 151.061 -123.68
+
+# 결과 안좋으면 스케일링 ㄱ
+
+# 전처리하자
+# 스케일링
+# from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler
+# x_train_origin2 = x_train_origin.astype('float32')/255.
+# x_train = x_train_origin.astype('float32')/255.
+# x_pred = x_pred.astype('float32')/255.
 
 # y벡터화
 from tensorflow.keras.utils import to_categorical
 y_train = to_categorical(y_train_origin)
 # (4800,1000)
-
-print(x_train.shape)
-print(y_train.shape)
-
 
 # 스플릿
 from sklearn.model_selection import train_test_split
@@ -41,16 +61,6 @@ x_train, x_test, y_train, y_test = train_test_split(x_train, y_train, test_size=
 print('x_train:',x_train.shape, 'x_test:',x_test.shape); print('y_train:',y_train.shape, 'y_test:',y_test.shape)
 # x_train: (3840, 128, 128, 3) x_test: (960, 128, 128, 3)
 # y_train: (3840, 100) y_test: (960, 100)
-
-print(x_train.shape, y_train.shape)
-print(np.max(x_train), np.min(x_train))
-print(np.max(y_train), np.min(y_train))
-# x_train: (38571, 150, 150, 3) x_test: (9643, 150, 150, 3)
-# y_train: (38571, 1000) y_test: (9643, 1000)
-# (38571, 150, 150, 3) (38571, 1000)
-# 151.061 -123.68
-# 1.0 0.0
-
 
 # -----------------------------------------------------------------------------------------------------
 # 모델 구성
@@ -65,7 +75,7 @@ from tensorflow.keras.regularizers import l2
 input = Input(shape=(150, 150, 3))
 
 input_pad = ZeroPadding2D(padding=(3, 3))(input)
-conv1_7x7_s2 = Conv2D(64, (2,2), strides=(2,2), padding='valid', activation='relu', name='conv1/7x7_s2', kernel_regularizer=l2(0.0002))(input_pad)
+conv1_7x7_s2 = Conv2D(64, (7,7), strides=(2,2), padding='valid', activation='relu', name='conv1/7x7_s2', kernel_regularizer=l2(0.0002))(input_pad)
 conv1_zero_pad = ZeroPadding2D(padding=(1, 1))(conv1_7x7_s2)
 pool1_helper = BatchNormalization()(conv1_zero_pad)
 pool1_3x3_s2 = MaxPooling2D(pool_size=(3,3), strides=(2,2), padding='valid', name='pool1/3x3_s2')(pool1_helper)
@@ -138,11 +148,11 @@ model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['acc'])
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, TensorBoard
 patience = 16
 modelpath='C:/lotte_data/h5/imgg_05.hdf5'
-batch_size = 24
+batch_size = 8
 stop = EarlyStopping(monitor='val_loss', patience=patience, verbose=1)
 mc = ModelCheckpoint(filepath=modelpath, monitor='val_loss', save_best_only=True, verbose=1)
 lr = ReduceLROnPlateau(factor=0.5, patience=int(patience/2), verbose=1)
-model.fit(x_train, y_train, epochs=1000, batch_size=batch_size, verbose=1, validation_split=0.2, callbacks=[stop,lr, mc])
+model.fit(x_train, y_train, epochs=200, batch_size=batch_size, verbose=1, validation_split=0.2, callbacks=[stop, mc,lr])
 
 # -----------------------------------------------------------------------------------------------------
 # 최고 모델로 평가
@@ -176,7 +186,6 @@ print('==== csv save done ====')
 
 
 
-
 # # -----------------------------------------------------------------------------------------------------
 # # 최고 모델로 100가지 애큐러시 확인
 # for i in range(label_size):
@@ -197,7 +206,4 @@ print("time >> " , time)
 
 print('°˖✧(ง •̀ω•́)ง✧˖° 잘한다 잘한다 잘한다~')
 
-# 이미지 키워서 진행 192터짐 > 180(터짐) > 160(터짐ㅡㅡ) > 150(드디어어어)
-
 # imgg_05
-# 1000번 원격ing
