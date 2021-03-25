@@ -43,27 +43,27 @@ print('max(x_train_03): ', np.max(x_train_03), '\tmin(x_train_03): ', np.min(x_t
 '''
 
 
-y_label_01 = np.load('C:/lotte_data/npy/train_label_1000.npy')
-y_label_02 = np.load('C:/lotte_data/npy/1,2sum_label_1000.npy')
-y_label_03 = np.load('C:/lotte_data/npy/1,2sum_label_1000_new.npy')
+y_label_01 = np.load('D:/lotte_data/npy/train_label_1000.npy')
+y_label_02 = np.load('D:/lotte_data/npy/1,2sum_label_1000.npy')
 
+print(len(y_label_01[y_label_01==445]))
+print(len(y_label_02[y_label_02==445]))
+
+'''
 print('y_label_01.shape: ', y_label_01.shape)
 print('y_label_02.shape: ', y_label_02.shape)
-print('y_label_03.shape: ', y_label_03.shape)
 # y_label_01.shape:  (48000,)
 # y_label_02.shape:  (48214,)
 # y_label_03.shape:  (48160,)
 
 print('max(y_label_01): ', np.max(y_label_01), '\tmin(y_label_01): ', np.min(y_label_01))
 print('max(y_label_02): ', np.max(y_label_02), '\tmin(x_train_02): ', np.min(y_label_02))
-print('max(y_label_03): ', np.max(y_label_03), '\tmin(y_label_03): ', np.min(y_label_03))
 # max(y_label_01):  999   min(y_label_01):  0
 # max(y_label_02):  999   min(x_train_02):  0
 # max(y_label_03):  999   min(y_label_03):  0
 
-print('y_label_01(50개): ',(y_label_01[1000:1050]))
-print('y_label_02(50개): ',(y_label_02[1000:1050]))
-print('y_label_03(50개): ',(y_label_03[1000:1050]))
+print('y_label_01(50개): ',(y_label_01[1000:2000]))
+print('y_label_02(50개): ',(y_label_02[1000:2000]))
 # y_label_01(50개):  [20 20 20 20 20 20 20 20 21 21 21 21 21 21 21 21 21 21 21 21 21 21 21 21
 #  21 21 21 21 21 21 21 21 21 21 21 21 21 21 21 21 21 21 21 21 21 21 21 21
 #  21 21]
@@ -74,3 +74,5 @@ print('y_label_03(50개): ',(y_label_03[1000:1050]))
 #  21 21 21 21 21 21 21 21 21 21 21 21 21 21 21 21 21 21 21 21 21 21 21 21
 #  21 21]
 
+
+'''
