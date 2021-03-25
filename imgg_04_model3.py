@@ -64,7 +64,6 @@ print('x_train:',x_train.shape, 'x_test:',x_test.shape); print('y_train:',y_trai
 
 # -----------------------------------------------------------------------------------------------------
 # 모델 구성
-# 모델 구성
 from tensorflow.keras.models import Sequential, load_model, Model
 from tensorflow.keras.layers import Conv2D, Dense, Dropout, MaxPooling2D, BatchNormalization, Flatten, Input
 from tensorflow.keras.layers import Activation, ZeroPadding2D, Concatenate, AveragePooling2D
