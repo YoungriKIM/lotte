@@ -94,7 +94,7 @@ for imgnumber in range(pred_size):
     pred_img = preprocess_input(pred_img)
     temp = np.argmax(model.predict(pred_img))
     y_pred.append(temp)
-    if imgnumber % 10000 == 19999:
+    if imgnumber % 10000 == 9999:
         print(str(imgnumber)+'번째 이미지 작업 완료')
 y_pred = np.array(y_pred)
 print(y_pred.shape)
