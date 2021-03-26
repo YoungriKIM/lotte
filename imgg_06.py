@@ -62,7 +62,7 @@ model.fit(x_train, y_train, epochs=1000, batch_size=batch_size, verbose=1, valid
 
 # -----------------------------------------------------------------------------------------------------
 # 최고 모델로 평가
-model.load_weight(modelpath)
+model.load_weight('C:/lotte_data/h5/imgg_04_8.hdf5')
 
 result = model.evaluate(x_test, y_test, batch_size=batch_size)
 print('loss: ', result[0], '\nacc: ', result[1])
