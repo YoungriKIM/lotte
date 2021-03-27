@@ -11,6 +11,7 @@ for image, label in read_img:
     image = image
     label = label
 
+
 print(image.shape)
 print(label.shape)
 
