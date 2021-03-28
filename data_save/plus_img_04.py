@@ -11,7 +11,7 @@ train = list()
 label = list()
 
 for aa in range(1000):
-    img = glob(f'C:/lotte_data/LPD_competition/train/{aa}/*.jpg')
+    img = glob(f'D:/lotte_data/LPD_competition/train/{aa}/*.jpg')
     for j in img :
         temp = Image.open(j)
         temp = temp.convert("RGB")
@@ -28,9 +28,7 @@ print(label.shape)
 
 # ---------------------------------------------------------------------
 # npy로 저장
-np.save('C:/lotte_data/npy/brandnew_1000plus_data.npy', arr = train)
-np.save('C:/lotte_data/npy/brandnew_1000plus_label.npy', arr = label)
+np.save('D:/lotte_data/npy/brandnew_1000plus_data.npy', arr = train)
+np.save('D:/lotte_data/npy/brandnew_1000plus_label.npy', arr = label)
 print('===== done =====')
-
-
 
